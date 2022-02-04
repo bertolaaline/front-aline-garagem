@@ -2,13 +2,19 @@ import axios from "axios"
 //import bootstrap from "bootstrap"
 import "bootstrap/dist/css/bootstrap.css"
 
+const apagarCarro = async placa => {
+    await axios.delete(`https://aline-garagem.deta.dev/veiculos/${placa}`)
+    iniciaPrograma()
+}
+
 const criarTabela = listaDeVeiculos => {
     const colunas = [
         "key",
         "Marca",
         "Modelo",
         "Placa",
-        "Cor"
+        "Cor",
+        "Ações"
     ]
 
     const tabela = document.createElement("table")
@@ -33,6 +39,7 @@ const criarTabela = listaDeVeiculos => {
 
 const iniciaPrograma = async() => {
     const veiculoDiv = document.querySelector("#veiculos")
+    veiculoDiv.innerHTML = ""
     const listaDeVeiculos = (await axios.get("https://aline-garagem.deta.dev/veiculos")).data.carros
     
     criarTabela()
@@ -63,10 +70,26 @@ const iniciaPrograma = async() => {
         cor.innerText = veiculo.cor
         row.append(cor)
 
+        const acoes = document.createElement("td")
+        const botaoApagar = document.createElement("button")
+        botaoApagar.innerText = "X"
+        botaoApagar.setAttribute("id", `btn-apagar-${veiculo.placa}`)
+        botaoApagar.classList.add("btn")
+        botaoApagar.classList.add("btn-danger")
+        acoes.append(botaoApagar)
+        row.append(acoes)
+
         tableBody.append(row)
     }
 
     tabelaCarros.append(tableBody)
+
+    tabelaCarros.addEventListener("click", evt => {
+        if(evt.target.id.includes("btn-apagar")) {
+            const placa = evt.target.id.split("-")[2]
+            apagarCarro(placa)
+        }
+    })
 }
 
 window.onload = iniciaPrograma()
