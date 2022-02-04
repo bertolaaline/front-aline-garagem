@@ -1,3 +1,7 @@
+import axios from "axios"
+//import bootstrap from "bootstrap"
+import "bootstrap/dist/css/bootstrap.css"
+
 const criarTabela = listaDeVeiculos => {
     const colunas = [
         "key",
